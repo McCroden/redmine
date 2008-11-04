@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+require 'fileutils'
+
+RAILS_ENV = "production"
+require File.dirname(__FILE__) + '/../config/boot'
+require RAILS_ROOT + '/config/environment'
+
+begin
+  puts "waiting for changes..."
+  loop do
+    if File.exist?("/tmp/update-redmine-changesets")
+      puts "#{Time.now.inspect} -- updating repos"
+      Repository.fetch_changesets
+      FileUtils.rm("/tmp/update-redmine-changesets")
+      puts "#{Time.now.inspect} -- update done"
+    else
+      puts "#{Time.now.inspect} -- no update"
+    end
+    sleep 60
+  end
+rescue Interrupt
+  puts "quitting..."
+  exit
+end
