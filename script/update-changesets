@@ -11,16 +11,12 @@ begin
   mq_pass   = `git config hooks.queuepassword`.chomp
 
   EM.run do
-    connection = AMQP.connect(
-      :host => mq_server,
-      :user => mq_user,
-      :pass => mq_pass
-    )
+    connection = AMQP.connect(:host => mq_server, :user => mq_user, :pass => mq_pass)
     amq = MQ.new(connection)
     
     amq.queue("redmine-repo-update").subscribe do |repo_name|
       puts "#{Time.now.inspect} -- updating #{repo_name}"
-      r = Repository.find(:first, :conditions => ["url LIKE '%?'", repo_name])
+      r = Repository.find(:first, :conditions => ["url LIKE ?", "%"+repo_name])
       r.fetch_changesets
       puts "#{Time.now.inspect} -- #{repo_name} update complete"
     end
