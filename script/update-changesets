@@ -6,9 +6,9 @@ begin
 
   require "mq"
 
-  mq_server = `git config --system hooks.queueserver`.chomp
-  mq_user   = `git config --system hooks.queueuser`.chomp
-  mq_pass   = `git config --system hooks.queuepassword`.chomp
+  mq_server = `git config hooks.queueserver`.chomp
+  mq_user   = `git config hooks.queueuser`.chomp
+  mq_pass   = `git config hooks.queuepassword`.chomp
 
   EM.run do
     connection = AMQP.connect(
