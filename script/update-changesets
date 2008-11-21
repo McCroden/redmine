@@ -17,8 +17,12 @@ begin
     amq.queue("redmine-repo-update").subscribe do |repo_name|
       puts "#{Time.now.inspect} -- updating #{repo_name}"
       r = Repository.find(:first, :conditions => ["url LIKE ?", "%"+repo_name])
-      r.fetch_changesets
-      puts "#{Time.now.inspect} -- #{repo_name} update complete"
+      if r
+        r.fetch_changesets
+        puts "#{Time.now.inspect} -- #{repo_name} update complete"
+      else
+        puts "#{Time.now.inspect} -- uhoh, couldn't find repo named '#{repo_name}'"
+      end
     end
   end
 
